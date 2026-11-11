@@ -1,0 +1,480 @@
+
+
+import os
+import time
+import sys
+
+# Initialise artefact managemnet system using lists
+artefacts = ["Dove Body Wash", "CeraVe Cleanser",
+             "Olay Body Lotion", "Garnier Sunscreen"]
+
+categories = ["Body Care", "Skincare",
+              "Body Care", "Sun Protection"]
+
+locations = ["Shelf A", "Shelf B", "Shelf C", "Shelf D"]
+
+conditions = ["Good", "Good", "Damaged", "Good"]
+
+prices = [5.00, 12.00, 8.00, 7.00]
+
+stock = [20, 15, 8, 5]
+
+
+# Clear the console screen
+def clear_screen():
+    os.system("cls" if os.name == "nt" else "clear")
+
+
+# This fucntion display the main menu options
+def display_menu():
+    print("\n====================================")
+    print("      ARTEFACT MANAGEMENT SYSTEM")
+    print("====================================")
+    print("1. View all artefacts")
+    print("2. Add a new artefact")
+    print("3. Update artefact condition")
+    print("4. Search for an artefact")
+    print("5. View artefacts by category")
+    print("6. View damaged or repair artefacts")
+    print("7. Update stock quantity")
+    print("8. Remove an artefact")
+    print("9. View low-stock artefacts")
+    print("10. Exit")
+    print("====================================")
+
+
+# Allow user to view all artefacts
+def view_artefacts():
+    clear_screen()
+    print("\n========== ALL ARTEFACTS ==========")
+    print("Total artefacts:", len(artefacts))
+
+    if len(artefacts) == 0:
+        print("No artefacts are available.")
+    else:
+        for i in range(len(artefacts)):
+            print("\nArtefact:", artefacts[i])
+            print("Category:", categories[i])
+            print("Display location:", locations[i])
+            print("Price: £{:.2f}".format(prices[i]))
+            print("Condition:", conditions[i])
+            print("Stock quantity:", stock[i])
+
+            if stock[i] == 0:
+                print("Stock status: Out of stock")
+            elif stock[i] <= 5:
+                print("Stock status: Low stock")
+            else:
+                print("Stock status: In stock")
+
+            print("----------------------------------")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# User can add a new artefact
+def add_artefact():
+    clear_screen()
+    print("\n========== ADD NEW ARTEFACT ==========")
+
+    artefact_name = input("Enter artefact name: ").strip()
+
+    if artefact_name == "":
+        print("Artefact name cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    for artefact in artefacts:
+        if artefact.lower() == artefact_name.lower():
+            print("This artefact already exists.")
+            input("Press Enter to return...")
+            return
+
+    category = input("Enter artefact category: ").strip()
+
+    if category == "":
+        print("Category cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    location = input("Enter display location: ").strip()
+
+    if location == "":
+        print("Display location cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    while True:
+        try:
+            price = float(input("Enter artefact value (£): "))
+
+            if price <= 0:
+                print("Value must be greater than zero.")
+            else:
+                break
+
+        except ValueError:
+            print("Invalid value. Example: 5.99")
+
+    while True:
+        try:
+            quantity = int(input("Enter stock quantity: "))
+
+            if quantity < 0:
+                print("Stock quantity cannot be negative.")
+            else:
+                break
+
+        except ValueError:
+            print("Please enter a whole number.")
+
+    print("\nChoose the artefact condition:")
+    print("1. Good")
+    print("2. Damaged")
+    print("3. Under repair")
+
+    condition_choice = input("Enter your choice (1-3): ").strip()
+
+    if condition_choice == "1":
+        condition = "Good"
+    elif condition_choice == "2":
+        condition = "Damaged"
+    elif condition_choice == "3":
+        condition = "Under repair"
+    else:
+        print("Invalid condition choice. Artefact was not added.")
+        input("Press Enter to return...")
+        return
+
+    # give the user easy access to add artefact information to the lists
+    artefacts.append(artefact_name)
+    categories.append(category)
+    locations.append(location)
+    conditions.append(condition)
+    prices.append(price)
+    stock.append(quantity)
+
+    print("\nArtefact added successfully!")
+    print("Artefact:", artefact_name)
+    print("Category:", category)
+    print("Display location:", location)
+    print("Value: £{:.2f}".format(price))
+    print("Condition:", condition)
+    print("Stock quantity:", quantity)
+
+    input("\nPress Enter to return to the menu...")
+
+
+# Allow user to update artefact conditions
+def update_condition():
+    clear_screen()
+    print("\n========== UPDATE ARTEFACT CONDITION ==========")
+
+    artefact_name = input("Enter artefact name: ").strip()
+
+    if artefact_name == "":
+        print("Artefact name cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    artefact_found = False
+
+    for i in range(len(artefacts)):
+        if artefacts[i].lower() == artefact_name.lower():
+            artefact_found = True
+
+            print("\nArtefact:", artefacts[i])
+            print("Current condition:", conditions[i])
+
+            print("\nChoose the new condition:")
+            print("1. Good")
+            print("2. Damaged")
+            print("3. Under repair")
+
+            choice = input("Enter your choice (1-3): ").strip()
+
+            if choice == "1":
+                conditions[i] = "Good"
+            elif choice == "2":
+                conditions[i] = "Damaged"
+            elif choice == "3":
+                conditions[i] = "Under repair"
+            else:
+                print("Invalid choice. Condition was not changed.")
+                input("Press Enter to return...")
+                return
+
+            print("\nArtefact condition updated successfully!")
+            print("New condition:", conditions[i])
+            break
+
+    if not artefact_found:
+        print("Artefact not found.")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# can search for an artefact here
+def search_artefact():
+    clear_screen()
+    print("\n========== SEARCH FOR AN ARTEFACT ==========")
+
+    search_name = input("Enter artefact name: ").strip()
+
+    if search_name == "":
+        print("Search name cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    artefact_found = False
+
+    for i in range(len(artefacts)):
+        if search_name.lower() in artefacts[i].lower():
+            artefact_found = True
+
+            print("\nArtefact:", artefacts[i])
+            print("Category:", categories[i])
+            print("Display location:", locations[i])
+            print("Value: £{:.2f}".format(prices[i]))
+            print("Condition:", conditions[i])
+            print("Stock quantity:", stock[i])
+
+            if stock[i] == 0:
+                print("Stock status: Out of stock")
+            elif stock[i] <= 5:
+                print("Stock status: Low stock")
+            else:
+                print("Stock status: In stock")
+
+            print("----------------------------------")
+
+    if not artefact_found:
+        print("No matching artefacts were found.")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# allow user to view artefacts by category
+def view_by_category():
+    clear_screen()
+    print("\n========== ARTEFACTS BY CATEGORY ==========")
+
+    category_name = input("Enter category name: ").strip()
+
+    if category_name == "":
+        print("Category name cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    category_found = False
+
+    for i in range(len(artefacts)):
+        if category_name.lower() == categories[i].lower():
+            category_found = True
+
+            print("\nArtefact:", artefacts[i])
+            print("Category:", categories[i])
+            print("Display location:", locations[i])
+            print("Value: £{:.2f}".format(prices[i]))
+            print("Condition:", conditions[i])
+            print("Stock quantity:", stock[i])
+            print("----------------------------------")
+
+    if not category_found:
+        print("No artefacts found in this category.")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# let the use view damaged or repair artefacts
+def view_damaged_artefacts():
+    clear_screen()
+    print("\n========== DAMAGED OR REPAIR ARTEFACTS ==========")
+
+    artefact_found = False
+
+    for i in range(len(artefacts)):
+        if conditions[i] == "Damaged" or conditions[i] == "Under repair":
+            artefact_found = True
+
+            print("\nArtefact:", artefacts[i])
+            print("Category:", categories[i])
+            print("Display location:", locations[i])
+            print("Condition:", conditions[i])
+            print("Value: £{:.2f}".format(prices[i]))
+            print("Stock quantity:", stock[i])
+            print("----------------------------------")
+
+    if not artefact_found:
+        print("No damaged or repair artefacts found.")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# allow user to update stock quantity
+def update_stock():
+    clear_screen()
+    print("\n========== UPDATE STOCK QUANTITY ==========")
+
+    artefact_name = input("Enter artefact name: ").strip()
+
+    if artefact_name == "":
+        print("Artefact name cannot be empty.")
+        input("Press Enter to return...")
+        return
+
+    artefact_found = False
+
+    for i in range(len(artefacts)):
+        if artefacts[i].lower() == artefact_name.lower():
+            artefact_found = True
+
+            print("\nArtefact:", artefacts[i])
+            print("Current stock:", stock[i])
+
+            while True:
+                try:
+                    new_stock = int(input("Enter new stock quantity: "))
+
+                    if new_stock < 0:
+                        print("Stock cannot be negative.")
+                    else:
+                        stock[i] = new_stock
+
+                        print("\nStock updated successfully!")
+                        print("New stock quantity:", stock[i])
+
+                        if stock[i] == 0:
+                            print("Warning: This artefact is out of stock.")
+                        elif stock[i] <= 5:
+                            print("Warning: This artefact has low stock.")
+
+                        break
+
+                except ValueError:
+                    print("Please enter a whole number.")
+
+            break
+
+    if not artefact_found:
+        print("Artefact not found.")
+
+    input("\nPress Enter to return to the menu...")
+
+
+# Main function to run the artefact management system
+def main():
+    while True:
+        clear_screen()
+        display_menu()
+
+        choice = input("Choose an option (1-10): ").strip()
+
+        if choice == "1":
+            view_artefacts()
+
+        elif choice == "2":
+            add_artefact()
+
+        elif choice == "3":
+            update_condition()
+
+        elif choice == "4":
+            search_artefact()
+
+        elif choice == "5":
+            view_by_category()
+
+        elif choice == "6":
+            view_damaged_artefacts()
+
+        elif choice == "7":
+            update_stock()
+
+        elif choice == "8":
+            clear_screen()
+            print("\n========== REMOVE AN ARTEFACT ==========")
+
+            artefact_name = input(
+                "Enter artefact name to remove: "
+            ).strip()
+
+            if artefact_name == "":
+                print("Artefact name cannot be empty.")
+            else:
+                artefact_found = False
+
+                for i in range(len(artefacts)):
+                    if artefacts[i].lower() == artefact_name.lower():
+                        artefact_found = True
+
+                        print("\nArtefact:", artefacts[i])
+
+                        confirm = input(
+                            "Are you sure you want to remove it? (yes/no): "
+                        ).strip().lower()
+
+                        if confirm == "yes":
+                            artefacts.pop(i)
+                            categories.pop(i)
+                            locations.pop(i)
+                            conditions.pop(i)
+                            prices.pop(i)
+                            stock.pop(i)
+
+                            print("Artefact removed successfully.")
+
+                        elif confirm == "no":
+                            print("Artefact removal cancelled.")
+
+                        else:
+                            print(
+                                "Invalid response. Artefact was not removed."
+                            )
+
+                        break
+
+                if not artefact_found:
+                    print("Artefact not found.")
+
+            input("\nPress Enter to return to the menu...")
+
+        elif choice == "9":
+            clear_screen()
+            print("\n========== LOW-STOCK ARTEFACTS ==========")
+
+            artefact_found = False
+
+            for i in range(len(artefacts)):
+                if stock[i] <= 5:
+                    artefact_found = True
+
+                    print("\nArtefact:", artefacts[i])
+                    print("Display location:", locations[i])
+                    print("Stock quantity:", stock[i])
+
+                    if stock[i] == 0:
+                        print("Status: Out of stock")
+                    else:
+                        print("Status: Low stock")
+
+                    print("----------------------------------")
+
+            if not artefact_found:
+                print("No low-stock artefacts found.")
+
+            input("\nPress Enter to return to the menu...")
+
+        elif choice == "10":
+            print("\nThank you for using the Artefact Management System.")
+            time.sleep(1)
+            sys.exit()
+
+        else:
+            print("\nInvalid choice. Please enter a number from 1 to 10.")
+            time.sleep(2)
+
+
+# Run the program
+if __name__ == "__main__":
+    main()
